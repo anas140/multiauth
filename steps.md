@@ -79,4 +79,15 @@ step2: "php artisan make:auth" //user authentiation for customers/users (laravel
 		$admin->job_title = 'admin'
 		$admin->save();
 
-7: 
+##7: Exception
+# We have our logins working as intended and are able to log in and out as our different users. It finally feels like the app is coming together. We have a Users model and Admins model, tracking different types of users independently. 
+# Now we simply need to fix a few weird occurrences. The first problem we have is that if we ever try to go to our Admin center when we are not logged in, it redirects us to the Users Login Form. This is not right, we would expect the app to redirect us to the Admin Login Form so that we can log in as an Admin. We will fix this part first. This is can be handled in our exceptions handler. 
+# In the exceptions handler we will get the guard that triggered the exception and then compare it to the guards in our app. Since we only have two (non-api) guards this will be easy. Check to see if it is admin and if it isn't, then it must be the web guard. We will set our named route for each login form and then redirect to the one that gets triggered. 
+# The second problem is that when our "Guest" middleware notices a logged in user, it always redirects us to the /home location. This is ok when we are accessing a users guest path, but if we are trying to access an admin guest path, this is very unexpected. The more natural concept would be to redirect us to the admin dashboard. 
+# We can edit this functionality in the RedirectIfAuthenticated Middleware. Just like before, we use our guard and test if it is either admin or web. Then redirect to the correct url for that guard's dashboard.
+# 7.1 
+	add this class in app->exceptions->Handler.php
+		use Exception;
+		use Request;
+		use Illuminate\Auth\AuthenticationException;
+		use Response;
