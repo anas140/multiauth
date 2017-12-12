@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Admin extends Authenticatable
 {
     use Notifiable;
-    protected $quard = 'admin',
+    protected $quard = 'admin';
 
     /**
      * The attributes that are mass assignable.
