@@ -114,3 +114,56 @@ step2: "php artisan make:auth" //user authentiation for customers/users (laravel
 		8.3.4 inside the LoginController
 		change
 			$this->middleware('guest', ['except' => ['loguot', userLogout]])
+
+#9 Forgot Password functionality for Admin
+  9.1 - GET - password/reset 
+	when admin clicks the forgot password link show a page with form for email input
+  9.2 - POST - password/email 
+  	When submit the form 	send an an email to the user
+  9.3 - GET - password/reset/{token}
+  	reset the password form
+
+CODE--
+	Create (duplicate 2 controllers)
+	1- AdminResetPasswordController for step 4
+	2- AdminForgotPasswordController
+
+	rename contoller names
+
+	use Password and Auth facade
+	use Illuminate\Http\Request; 
+	for both controllers
+
+	protected redirectTo = '/admin'
+
+	$this->middleware('guest:admin');
+
+	add a method to define admin password broker
+	//in both admin Reset & Forgot ctrls
+	protected function broker() {
+		return Password::broker('admins');
+	}
+
+	protected function guard() {
+		return Auth::guard('admin);
+	}
+
+//Setting up the routes
+
+php artisan r:l
+add 4 routes in admin prefix
+post('password/email', Auth\AdmFPC@sRLE)->n(a.p.e);
+get('password/reset', Auth\AdmFPC@sRLF)->n(a.p.rqst);
+post('password/reset', Auth\AdmRPC@sRLE)->
+get('password/reset/{token}', Auth\AdmFPC@sRLE)->n(a.p.reset);
+#password reset views
+duplicate the password folder views
+change the route file
+email-admin.bld.php = action = {{route('admin.password.email)}}
+reset-admin.blade.php = action {{route('admin.password.request)}}
+
+add method to routes
+showLinkRequestForm to AdminForgotPasswordController
+sendResetLinkEmail to AdminForgotPasswordController
+
+step 3 : AdminResetPasswordController
