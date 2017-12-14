@@ -91,3 +91,26 @@ step2: "php artisan make:auth" //user authentiation for customers/users (laravel
 		use Request;
 		use Illuminate\Auth\AuthenticationException;
 		use Response;
+
+# 8 . Logout functionality for Users an Admin
+	8.1 : AdminLoginController add logout method
+			1. specify the guard and add logout
+				Auth::guard('admin')->logout();
+			2: return rediirecg('/');
+	8.2 : Add Logout for Users
+			Inside LoginController
+			8.2.1 : add logout method userLogout()
+				Auth::guard('web')->logout();
+				return redirect('/')
+	8.3 Add routes for logout
+		8.3.1 : inside admin prefix
+			Route::get('/logout	', Auth\AdminController@logout)->name('admin.logout');
+		8.3.2 : userLogout
+			Route::get('users/logout', Auth\LoginController@userLogout)->name('user.logout');
+
+		8.3.3: inside AdminLoginContrroller
+		change
+			$this->middleware('guest:admin', ['except' => ['logout']]);
+		8.3.4 inside the LoginController
+		change
+			$this->middleware('guest', ['except' => ['loguot', userLogout]])

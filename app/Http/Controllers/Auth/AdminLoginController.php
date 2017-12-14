@@ -9,7 +9,7 @@ use Auth;
 class AdminLoginController extends Controller
 {
 	public function __construct() {
-		$this->middleware('guest:admin');
+		$this->middleware('guest:admin', ['except' => ['logout']]);
 	}
     public function showLoginForm() {
 	    	return view('auth.admin-login');
@@ -28,5 +28,9 @@ class AdminLoginController extends Controller
 
     	//4. if ! success then redirect to thr login form with data
     		return redirect()->back()->withInput($request->only('email', 'remember'));
+    }
+    public function logout() {
+        Auth::guard('admin')->logout();
+        return redirect('/');
     }
 }
