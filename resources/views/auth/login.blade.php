@@ -5,8 +5,17 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
+                @if ($message = Session::get('success'))
+                        <div class="alert alert-success">
+                            <p>{{ $message }}</p>
+                        </div>
+                    @endif
+                    @if ($message = Session::get('warning'))
+                        <div class="alert alert-warning">
+                            <p>{{ $message }}</p>
+                        </div>
+                    @endif
                 <div class="panel-heading">Login</div>
-
                 <div class="panel-body">
                     <form class="form-horizontal" method="POST" action="{{ route('login') }}">
                         {{ csrf_field() }}

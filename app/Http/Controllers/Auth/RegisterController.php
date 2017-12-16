@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
+use App\Mail\RegisterUser;
+use DB;
 
 class RegisterController extends Controller
 {
@@ -67,5 +71,38 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        event(new Registered($user = $this->create($request->all())));
+        $user['token'] = str_random(30);
+        // insert token in user for email registration
+        DB::table('users_activation')->insert(['id_user' => $user->id , 'token' => $user['token']]);
+
+        // Send mail to the user
+        \Mail::to($user)->send(new RegisterUser($user));
+
+        // $this->guard()->login($user);
+        // return $this->registered($request, $user)
+        //                 ?: redirect($this->redirectPath());
+        // if($this->registered($request, $user)) {
+            return redirect()->to('login')->with('success',"We sent activation code. Please check your mail.");
+        // }
+    }
+    public function userActivation($token) {
+        $check = DB::table('users_activation')->where('token',$token)->first();
+        if(!is_null($check)) {
+            $user = User::find($check->id_user);
+            if($user->is_activated == 1) {
+                return redirect()->to('login')->with('success', 'You are already activated');
+            }
+            $user->update(['is_activated' => 1]);
+            DB::table('users_activation')->where('token',$token)->delete(); 
+
+            return redirect()->to('login')->with('success', "Account Activated Successfully");
+        } else {
+            return redirect()->to('login')->with('warning', 'Your token is invalid');
+        }
     }
 }

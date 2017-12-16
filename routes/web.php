@@ -17,6 +17,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
+# VARIFI USER
+Route::get('/user/activation/{token}', 'Auth\RegisterController@userActivation')->name('user.activate');
+
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/home/logout', 'Auth\LoginController@userLogout')->name('user.logout');
 

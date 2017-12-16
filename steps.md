@@ -167,3 +167,5 @@ showLinkRequestForm to AdminForgotPasswordController
 sendResetLinkEmail to AdminForgotPasswordController
 
 step 3 : AdminResetPasswordController
+
+# 10 : Verifying Users with Email
